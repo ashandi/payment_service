@@ -1,0 +1,121 @@
+openapi: 3.0.3
+info:
+  title: Payment Service API
+  version: 1.0.0
+tags:
+  - name: users
+    description: A group of endpoints for work wih app users
+  - name: transactions
+    description: A group of endpoints to work with transactions
+paths:
+  /v1/users/{id}:
+    get:
+      tags:
+        - users
+      summary: Get user by user ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: number
+      responses:
+        '200':
+          description: successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          description: Invalid id supplied
+        '404':
+          description: User not found
+  /v1/transactions:
+    post:
+      tags:
+        - transactions
+      summary: Create a transaction
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTransactionRequest'
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Transaction'
+        '405':
+          description: Invalid input
+
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        firstName:
+          type: string
+          example: John
+        lastName:
+          type: string
+          example: James
+        balance:
+          type: number
+          format: double
+          example: 101.42
+    CreateTransactionRequest:
+      required:
+        - dstUserId
+        - amount
+      type: object
+      properties:
+        srcUserId:
+          type: integer
+          format: int64
+          example: 1
+        dstUserId:
+          type: integer
+          format: int64
+          example: 2
+        amount:
+          type: number
+          format: float
+          minimum: 0
+          exclusiveMinimum: true
+          example: 101.42
+    Transaction:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          example: 10
+        srcUserId:
+          type: integer
+          format: int64
+          example: 1
+        dstUserId:
+          type: integer
+          format: int64
+          example: 2
+        amount:
+          type: number
+          format: float
+          minimum: 0
+          exclusiveMinimum: true
+          example: 101.42
+        status:
+          type: string
+          enum: ['new', 'succeeded', 'failed']
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
